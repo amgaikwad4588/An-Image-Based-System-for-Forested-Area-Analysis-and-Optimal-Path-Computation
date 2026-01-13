@@ -1,0 +1,15 @@
+# EcoView Imaging - Python Dependencies
+# Install with: pip install -r requirements.txt
+
+# Core web framework
+flask>=3.0.0
+flask-cors>=4.0.0
+
+# Image processing and computer vision
+opencv-python>=4.8.0
+Pillow>=10.0.0
+numpy>=2.0.0
+scipy>=1.10.0
+
+# Additional dependencies for enhanced functionality
+requests>=2.30.0

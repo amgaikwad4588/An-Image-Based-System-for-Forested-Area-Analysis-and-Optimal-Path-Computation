@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/assets/css/theme.css">
+    <link rel="stylesheet" href="/src/assets/css/dashboard-forest.css">
+    <script src="/src/assets/js/database.js"></script>
+    <title>Dashboard - EcoView Imaging</title>
+</head>
+<body class="forest-dashboard">
+    
+    <!-- Leaf Particles -->
+    <div class="leaf-particles" id="leafParticles"></div>
+
+    <!-- Header -->
+    <header class="app-header forest-header">
+        <div class="container app-header-inner">
+            <a class="brand" href="/index.html">
+                <div class="brand-icon">
+                    <img src="/images/treeicon.png" alt="EcoView Imaging logo">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">EcoView</span>
+                    <span class="brand-tagline">Imaging</span>
+                </div>
+            </a>
+            
+            <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            
+            <nav class="nav">
+                <div class="nav-items">
+                    <a href="/predict.html" class="nav-item active">
+                        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="3" width="18" height="18" rx="2"/>
+                            <path d="M3 9h18M9 21V9"/>
+                        </svg>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/settings.html" class="nav-item">
+                        <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="3"/>
+                            <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"/>
+                        </svg>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+        
+        <div class="mobile-nav-overlay">
+            <nav class="mobile-nav">
+                <a href="/predict.html" class="mobile-nav-item">
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/settings.html" class="mobile-nav-item">
+                    <span class="nav-text">Settings</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container" style="padding: 0;">
+        
+        <!-- Wooden Chip Tabs -->
+        <div class="wooden-tabs-container">
+            <div class="wooden-tabs-wrapper">
+                <button class="wooden-chip-tab active" id="detection-button">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
+                    </svg>
+                    <span class="tab-text">Tree Count</span>
+                </button>
+                
+                <button class="wooden-chip-tab" id="segmentation-button">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 2v20M2 12h20"/>
+                        <circle cx="12" cy="12" r="4"/>
+                        <path d="M8 8l8 8M8 16l8-8"/>
+                    </svg>
+                    <span class="tab-text">Green Cover</span>
+                </button>
+                
+                <button class="wooden-chip-tab" id="species-button">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                    </svg>
+                    <span class="tab-text">Species ID</span>
+                </button>
+                
+                <button class="wooden-chip-tab" id="path-button">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <path d="M12 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                        <path d="M12 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+                    </svg>
+                    <span class="tab-text">Path Planning</span>
+                </button>
+                
+                <button class="wooden-chip-tab" id="historical-button">
+                    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    <span class="tab-text">History</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Tree Ring Separator -->
+        <div class="tree-ring-separator">
+            <svg viewBox="0 0 1200 60" preserveAspectRatio="none">
+                <defs>
+                    <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#1F4926;stop-opacity:0.4" />
+                        <stop offset="50%" style="stop-color:#4F7F47;stop-opacity:0.6" />
+                        <stop offset="100%" style="stop-color:#1F4926;stop-opacity:0.4" />
+                    </linearGradient>
+                </defs>
+                <path class="tree-ring-line" d="M0,30 Q300,10 600,30 T1200,30" fill="none" stroke="url(#ringGradient)"/>
+                <path class="tree-ring-line" d="M0,40 Q300,20 600,40 T1200,40" fill="none" stroke="url(#ringGradient)"/>
+            </svg>
+        </div>
+
+        <!-- Forest Card Container -->
+        <div class="forest-card-container">
+            <div class="forest-card">
+                <div class="forest-iframe-container">
+                    <iframe id="model-iframe" src="dist/index.html"></iframe>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer forest-footer">
+        <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>&copy; 2025 EcoView Imaging</span>
+            <span class="stat">Unified environmental analytics</span>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+        const bodyEl = document.body;
+        
+        mobileMenuToggle?.addEventListener('click', () => {
+            mobileNavOverlay.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+            bodyEl.classList.toggle('menu-open');
+        });
+        
+        mobileNavOverlay?.addEventListener('click', (e) => {
+            if (e.target === mobileNavOverlay) {
+                mobileNavOverlay.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                bodyEl.classList.remove('menu-open');
+            }
+        });
+        
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                mobileNavOverlay.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                bodyEl.classList.remove('menu-open');
+            });
+        });
+        
+        const currentPage = window.location.pathname.split('/').pop() || 'predict.html';
+        document.querySelectorAll('.nav-item').forEach(item => {
+            const href = item.getAttribute('href');
+            if (href && href.includes(currentPage)) {
+                item.classList.add('active');
+            }
+        });
+
+        // Tab functionality
+        const detectionButton = document.getElementById('detection-button');
+        const segmentationButton = document.getElementById('segmentation-button');
+        const speciesButton = document.getElementById('species-button');
+        const pathButton = document.getElementById('path-button');
+        const historicalButton = document.getElementById('historical-button');
+        const modelIframe = document.getElementById('model-iframe');
+        const allTabs = document.querySelectorAll('.wooden-chip-tab');
+
+        function setActiveTab(activeButton) {
+            allTabs.forEach(tab => tab.classList.remove('active'));
+            activeButton.classList.add('active');
+        }
+
+        detectionButton.addEventListener('click', () => {
+            setActiveTab(detectionButton);
+            modelIframe.src = 'dist/index.html';
+        });
+
+        segmentationButton.addEventListener('click', () => {
+            setActiveTab(segmentationButton);
+            modelIframe.src = 'object_segmentation.html';
+        });
+
+        speciesButton.addEventListener('click', () => {
+            setActiveTab(speciesButton);
+            modelIframe.src = 'tree_species.html';
+        });
+
+        pathButton.addEventListener('click', () => {
+            setActiveTab(pathButton);
+            modelIframe.src = 'optimal_path.html';
+        });
+
+        historicalButton.addEventListener('click', () => {
+            setActiveTab(historicalButton);
+            modelIframe.src = 'historical_data.html';
+        });
+
+        // Initialize leaf particles
+        function initLeafParticles() {
+            const particlesContainer = document.getElementById('leafParticles');
+            if (!particlesContainer) return;
+            
+            const particleCount = 20;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'leaf-particle';
+                
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.top = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 30 + 's';
+                particle.style.animationDuration = (25 + Math.random() * 15) + 's';
+                
+                const size = 6 + Math.random() * 4;
+                particle.style.width = size + 'px';
+                particle.style.height = size + 'px';
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+
+        // Inject tree count overlay for the dist tree-count UI
+        function setupTreeCountOverlay() {
+            try {
+                const iframe = document.getElementById('model-iframe');
+                const win = iframe.contentWindow;
+                const doc = iframe.contentDocument || win.document;
+                if (!doc) return;
+
+                if (doc.getElementById('ecoview-tree-counter')) return;
+
+                const counter = doc.createElement('div');
+                counter.id = 'ecoview-tree-counter';
+                counter.textContent = 'Detected Trees: 0';
+                counter.style.position = 'fixed';
+                counter.style.left = '16px';
+                counter.style.bottom = '16px';
+                counter.style.background = 'rgba(26, 31, 28, 0.85)';
+                counter.style.backdropFilter = 'blur(10px)';
+                counter.style.color = '#7BC66A';
+                counter.style.padding = '12px 20px';
+                counter.style.border = '2px solid rgba(123, 198, 106, 0.4)';
+                counter.style.borderRadius = '12px';
+                counter.style.fontWeight = '700';
+                counter.style.fontSize = '15px';
+                counter.style.zIndex = '9999';
+                counter.style.boxShadow = '0 8px 20px rgba(0, 0, 0, 0.3), 0 0 20px rgba(123, 198, 106, 0.2)';
+                doc.body.appendChild(counter);
+
+                const MIN_CONFIDENCE = 0.35;
+                const ctxProto = win.CanvasRenderingContext2D?.prototype;
+                if (!ctxProto || win.__ecoviewCanvasPatched) {
+                    return;
+                }
+
+                const originalStrokeRect = ctxProto.strokeRect;
+                const originalFillRect = ctxProto.fillRect;
+                const originalFillText = ctxProto.fillText;
+                const quantize = (n) => Math.round(n);
+                const boxSet = new Set();
+                let rafPending = false;
+
+                function updateCounter() {
+                    counter.textContent = `Detected Trees: ${boxSet.size}`;
+                    boxSet.clear();
+                    rafPending = false;
+                }
+
+                function scheduleCounterUpdate() {
+                    if (!rafPending) {
+                        rafPending = true;
+                        win.requestAnimationFrame(updateCounter);
+                    }
+                }
+
+                function drawPending(ctx) {
+                    if (ctx.__ecoviewPendingStroke) {
+                        originalStrokeRect.apply(ctx, ctx.__ecoviewPendingStroke.args);
+                        ctx.__ecoviewPendingStroke = null;
+                    }
+                    if (ctx.__ecoviewPendingFill) {
+                        const prevFill = ctx.fillStyle;
+                        ctx.fillStyle = ctx.__ecoviewPendingFill.fillStyle;
+                        originalFillRect.apply(ctx, ctx.__ecoviewPendingFill.args);
+                        ctx.fillStyle = prevFill;
+                        ctx.__ecoviewPendingFill = null;
+                    }
+                }
+
+                function dropPending(ctx) {
+                    ctx.__ecoviewPendingStroke = null;
+                    ctx.__ecoviewPendingFill = null;
+                }
+
+                ctxProto.strokeRect = function(x, y, w, h) {
+                    this.__ecoviewPendingStroke = { args: [x, y, w, h] };
+                };
+
+                ctxProto.fillRect = function(x, y, w, h) {
+                    if (h <= 30 && w <= 250) {
+                        this.__ecoviewPendingFill = { args: [x, y, w, h], fillStyle: this.fillStyle };
+                        return;
+                    }
+                    return originalFillRect.call(this, x, y, w, h);
+                };
+
+                ctxProto.fillText = function(text, x, y, ...rest) {
+                    const textStr = typeof text === 'string' ? text : `${text}`;
+                    const match = textStr.match(/(\d+(?:\.\d+)?)%/);
+                    if (match) {
+                        const confidence = parseFloat(match[1]) / 100;
+                        if (confidence >= MIN_CONFIDENCE) {
+                            const rectArgs = this.__ecoviewPendingStroke?.args;
+                            drawPending(this);
+                            if (rectArgs) {
+                                const [rx, ry, rw, rh] = rectArgs;
+                                const key = `${quantize(rx)}_${quantize(ry)}_${quantize(rw)}_${quantize(rh)}`;
+                                boxSet.add(key);
+                                scheduleCounterUpdate();
+                            }
+                            return originalFillText.call(this, textStr, x, y, ...rest);
+                        }
+                        dropPending(this);
+                        return;
+                    }
+
+                    drawPending(this);
+                    return originalFillText.call(this, textStr, x, y, ...rest);
+                };
+
+                win.__ecoviewCanvasPatched = true;
+            } catch (e) {
+                // Cross-origin or timing issues; ignore
+            }
+        }
+
+        function maybeInjectOnLoad() {
+            const iframe = document.getElementById('model-iframe');
+            if (!iframe) return;
+            const src = iframe.getAttribute('src') || '';
+            if (src.includes('dist/index.html')) {
+                setTimeout(setupTreeCountOverlay, 600);
+            }
+        }
+
+        document.getElementById('model-iframe').addEventListener('load', maybeInjectOnLoad);
+        maybeInjectOnLoad();
+
+        // Initialize on load
+        document.addEventListener('DOMContentLoaded', () => {
+            initLeafParticles();
+        });
+    </script>
+
+</body>
+</html>

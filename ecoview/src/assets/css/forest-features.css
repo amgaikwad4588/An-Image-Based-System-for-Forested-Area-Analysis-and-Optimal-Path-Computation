@@ -1,0 +1,461 @@
+/* Forest-Themed Inner Feature Pages - EcoView Imaging */
+
+:root {
+  /* Forest Color Palette */
+  --forest-green: #1F4926;
+  --moss-green: #4F7F47;
+  --leaf-green: #7BC66A;
+  --bark-brown: #5A3E27;
+  --warm-soil: #8B6A4A;
+  --off-white: #F2EDE5;
+  --charcoal-forest: #0F1A12;
+  --soft-cream: #E8DFD0;
+  --deep-charcoal: #0A0F0C;
+  
+  /* Natural Gradients */
+  --gradient-canopy: linear-gradient(180deg, #1F4926 0%, #4F7F47 30%, #5A3E27 70%, #8B6A4A 100%);
+  --gradient-forest-card: linear-gradient(135deg, rgba(31, 73, 38, 0.9) 0%, rgba(79, 127, 71, 0.8) 50%, rgba(90, 62, 39, 0.9) 100%);
+  --gradient-wood: linear-gradient(135deg, #5A3E27 0%, #8B6A4A 50%, #5A3E27 100%);
+  --gradient-leaf: linear-gradient(135deg, #4F7F47 0%, #7BC66A 50%, #4F7F47 100%);
+  
+  /* Shadows & Glows */
+  --shadow-forest: 0 12px 40px rgba(0, 0, 0, 0.4), 0 4px 12px rgba(31, 73, 38, 0.2);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(79, 127, 71, 0.15);
+  --shadow-inner: inset 0 2px 8px rgba(0, 0, 0, 0.2);
+  --glow-leaf: 0 0 20px rgba(123, 198, 106, 0.3);
+  --glow-sunlight: 0 0 30px rgba(242, 237, 229, 0.15);
+  
+  /* Transitions */
+  --transition-natural: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Forest Feature Page Body */
+.forest-feature-page {
+  font-family: 'Inter', sans-serif;
+  background: var(--gradient-canopy);
+  color: var(--off-white);
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Forest Background Layers */
+.forest-feature-page::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(ellipse at 20% 20%, rgba(31, 73, 38, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(90, 62, 39, 0.15) 0%, transparent 50%),
+    url("data:image/svg+xml,%3Csvg width='100' height='100' xmlns='http://www.w3.org/2000/svg'%3E%3Cdefs%3E%3Cpattern id='bark' x='0' y='0' width='20' height='100' patternUnits='userSpaceOnUse'%3E%3Cpath d='M0,0 L20,0 L20,100 L0,100 Z' fill='none' stroke='%231F4926' stroke-width='0.5' opacity='0.05'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='100' height='100' fill='url(%23bark)'/%3E%3C/svg%3E");
+  background-size: 100% 100%, 100% 100%, 200px 200px;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+/* Forest Silhouettes */
+.forest-silhouette {
+  position: fixed;
+  width: 400px;
+  height: 100vh;
+  background: linear-gradient(180deg, transparent 0%, rgba(15, 26, 18, 0.2) 40%, rgba(15, 26, 18, 0.3) 100%);
+  clip-path: polygon(25% 100%, 30% 70%, 35% 60%, 40% 50%, 45% 40%, 50% 30%, 55% 20%, 50% 10%, 45% 5%, 50% 0%, 55% 5%, 60% 10%, 55% 20%, 60% 30%, 65% 40%, 70% 50%, 75% 60%, 80% 70%, 75% 100%);
+  z-index: 1;
+  pointer-events: none;
+  opacity: 0.15;
+  filter: blur(2px);
+}
+
+.forest-silhouette.left {
+  left: -100px;
+}
+
+.forest-silhouette.right {
+  right: -100px;
+  transform: scaleX(-1);
+}
+
+/* Leaf Particles */
+.forest-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.forest-particle {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  background: var(--leaf-green);
+  border-radius: 50% 0;
+  opacity: 0.12;
+  animation: float-forest 35s infinite ease-in-out;
+}
+
+@keyframes float-forest {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+    opacity: 0.12;
+  }
+  50% {
+    transform: translate(250px, -400px) rotate(360deg);
+    opacity: 0.25;
+  }
+}
+
+/* Feature Page Header */
+.forest-feature-header {
+  position: relative;
+  z-index: 3;
+  padding: 32px 0;
+  margin-bottom: 32px;
+}
+
+.forest-header-bar {
+  background: rgba(31, 73, 38, 0.7);
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(79, 127, 71, 0.4);
+  border-radius: 20px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  box-shadow: var(--shadow-card), var(--glow-sunlight);
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.forest-header-icon {
+  width: 32px;
+  height: 32px;
+  stroke: var(--leaf-green);
+  fill: none;
+  stroke-width: 2;
+  filter: drop-shadow(0 0 8px rgba(123, 198, 106, 0.4));
+}
+
+.forest-header-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--off-white);
+  margin: 0;
+  background: linear-gradient(135deg, var(--off-white) 0%, var(--soft-cream) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 0 20px rgba(242, 237, 229, 0.3);
+}
+
+/* Forest Content Card */
+.forest-content-card {
+  position: relative;
+  z-index: 3;
+  background: rgba(15, 26, 18, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(79, 127, 71, 0.3);
+  border-radius: 20px;
+  padding: 40px;
+  margin: 24px auto;
+  max-width: 1400px;
+  box-shadow: var(--shadow-forest);
+  overflow: hidden;
+}
+
+.forest-content-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: var(--gradient-leaf);
+  opacity: 0.6;
+}
+
+.forest-content-card::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(123, 198, 106, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+  animation: sunlight-sweep 8s ease-in-out infinite;
+}
+
+@keyframes sunlight-sweep {
+  0%, 100% { transform: rotate(0deg); }
+  50% { transform: rotate(180deg); }
+}
+
+/* Tree Ring Divider */
+.tree-ring-divider {
+  position: relative;
+  width: 100%;
+  height: 60px;
+  margin: 32px 0;
+  overflow: hidden;
+}
+
+.tree-ring-divider svg {
+  width: 100%;
+  height: 100%;
+}
+
+.tree-ring-line {
+  fill: none;
+  stroke: var(--moss-green);
+  stroke-width: 2;
+  opacity: 0.4;
+  animation: ring-pulse 5s ease-in-out infinite;
+}
+
+@keyframes ring-pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 0.7; }
+}
+
+/* Optimal Path - Symmetrical Image Sections */
+.path-image-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin: 32px 0;
+}
+
+.path-image-card {
+  position: relative;
+  background: rgba(15, 26, 18, 0.9);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(79, 127, 71, 0.4);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-natural);
+  overflow: hidden;
+}
+
+.path-image-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--gradient-leaf);
+  opacity: 0.5;
+}
+
+.path-image-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-card), var(--glow-leaf);
+  border-color: var(--leaf-green);
+}
+
+.path-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid rgba(79, 127, 71, 0.2);
+}
+
+.path-card-icon {
+  width: 24px;
+  height: 24px;
+  stroke: var(--leaf-green);
+  fill: none;
+  stroke-width: 2;
+}
+
+.path-card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--off-white);
+  margin: 0;
+}
+
+.path-image-container {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: rgba(10, 15, 12, 0.6);
+  border: 2px solid rgba(79, 127, 71, 0.3);
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-inner);
+}
+
+.path-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 8px;
+}
+
+.path-image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: rgba(242, 237, 229, 0.5);
+  font-size: 14px;
+}
+
+.path-image-placeholder svg {
+  width: 48px;
+  height: 48px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 1.5;
+  opacity: 0.5;
+}
+
+/* Upload Area */
+.forest-upload-area {
+  background: rgba(15, 26, 18, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px dashed rgba(123, 198, 106, 0.4);
+  border-radius: 16px;
+  padding: 32px;
+  text-align: center;
+  transition: var(--transition-natural);
+  cursor: pointer;
+  margin: 24px 0;
+}
+
+.forest-upload-area:hover {
+  border-color: var(--leaf-green);
+  background: rgba(31, 73, 38, 0.6);
+  box-shadow: var(--glow-leaf);
+}
+
+.forest-upload-icon {
+  width: 48px;
+  height: 48px;
+  stroke: var(--leaf-green);
+  fill: none;
+  stroke-width: 2;
+  margin: 0 auto 16px;
+  display: block;
+}
+
+.forest-upload-text {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--off-white);
+  margin-bottom: 8px;
+}
+
+.forest-upload-hint {
+  font-size: 14px;
+  color: rgba(242, 237, 229, 0.7);
+}
+
+/* Forest Button */
+.forest-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 12px;
+  border: 2px solid transparent;
+  background: var(--gradient-leaf);
+  color: var(--charcoal-forest);
+  cursor: pointer;
+  transition: var(--transition-natural);
+  text-decoration: none;
+  box-shadow: var(--shadow-card);
+}
+
+.forest-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-card), var(--glow-leaf);
+  border-color: var(--moss-green);
+}
+
+.forest-btn-icon {
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  fill: none;
+  stroke-width: 2;
+}
+
+/* Image Grid */
+.forest-image-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+  margin: 32px 0;
+}
+
+.forest-image-item {
+  position: relative;
+  background: rgba(15, 26, 18, 0.8);
+  border: 2px solid rgba(79, 127, 71, 0.3);
+  border-radius: 16px;
+  padding: 16px;
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+.forest-image-item img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .path-image-section {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  
+  .forest-header-bar {
+    padding: 20px 24px;
+  }
+  
+  .forest-header-title {
+    font-size: 24px;
+  }
+  
+  .forest-content-card {
+    padding: 24px;
+  }
+  
+  .forest-silhouette {
+    display: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .forest-header-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .forest-image-grid {
+    grid-template-columns: 1fr;
+  }
+}
+

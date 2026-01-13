@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/src/assets/css/theme.css">
+<style>
+/* Hide page chrome when embedded in the dashboard iframe */
+.embed-mode .app-header,
+.embed-mode .app-footer { display: none; }
+.embed-mode main.container { padding-top: 0 !important; }
+
+    body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f4;
+}
+
+h2, h3 {
+  color: #333;
+  padding: 20px;
+}
+
+h3 {
+  display: flex;
+  align-items: center;
+}
+
+input[type="file"] {
+  display: block;
+  margin: 20px;
+}
+
+button {
+  background-color: #4CAF50; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+}
+
+.image-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.image-container img {
+  max-width: calc(50% - 40px);
+}
+
+#green-cover-percentage {
+  font-size: 24px;
+}
+#idle-land-percentage{
+  font-size: 24px;
+}
+</style>
+</head>
+<body>
+    <script>
+        // If this page is inside an iframe, enable embed mode to avoid double navbars
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('embed-mode');
+        }
+    </script>
+
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <a class="brand" href="/index.html">
+                <div class="brand-icon">
+                    <img src="/images/treeicon.png" alt="EcoView Imaging logo">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">EcoView</span>
+                    <span class="brand-tagline">Imaging</span>
+                </div>
+            </a>
+            
+            <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            
+            <nav class="nav">
+                <div class="nav-items">
+                    <a href="/predict.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/tree_species.html" class="nav-item">
+                        <span class="nav-icon">🌳</span>
+                        <span class="nav-text">Species</span>
+                    </a>
+                    <a href="/optimal_path.html" class="nav-item">
+                        <span class="nav-icon">🗺️</span>
+                        <span class="nav-text">Optimal Path</span>
+                    </a>
+                    <a href="/historical_data.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">History</span>
+                    </a>
+                    <a href="/settings.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                    <a href="/index.html#map-green-cover" class="nav-item">
+                        <span class="nav-icon">🛰️</span>
+                        <span class="nav-text">Green Map</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+        
+        <div class="mobile-nav-overlay">
+            <nav class="mobile-nav">
+                <a href="/predict.html" class="mobile-nav-item">
+                    <span class="nav-icon">📊</span>
+                    <span class="nav-text">Dashboard</span>
+                </a>
+                <a href="/tree_species.html" class="mobile-nav-item">
+                    <span class="nav-icon">🌳</span>
+                    <span class="nav-text">Species</span>
+                </a>
+                <a href="/optimal_path.html" class="mobile-nav-item">
+                    <span class="nav-icon">🗺️</span>
+                    <span class="nav-text">Optimal Path</span>
+                </a>
+                <a href="/historical_data.html" class="mobile-nav-item">
+                    <span class="nav-icon">📈</span>
+                    <span class="nav-text">History</span>
+                </a>
+                <a href="/settings.html" class="mobile-nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    <span class="nav-text">Settings</span>
+                </a>
+                <a href="/index.html#map-green-cover" class="mobile-nav-item">
+                    <span class="nav-icon">🛰️</span>
+                    <span class="nav-text">Green Map</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 24px 0 40px;">
+        <h2 style="margin-bottom: 12px;background:linear-gradient(135deg, var(--primary), var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🌱 Green Cover</h2>
+
+        <!-- Map Snapshot Green Cover (draw rectangle on map) -->
+        <section class="card section">
+            <h3 style="margin:0 0 8px 0;">Map Snapshot Green Cover</h3>
+            <div id="ts-map" style="height:450px;width:100%;border:1px solid var(--border);border-radius:8px;"></div>
+            <div class="grid grid-2" style="margin-top:12px;align-items:flex-start;">
+                <div>
+                    <div class="stat" style="margin-bottom:8px;">Original Cropped</div>
+                    <img id="ts-cropped" class="media" alt="Cropped Image" crossorigin="anonymous" />
+                </div>
+                <div>
+                    <div class="stat" style="margin-bottom:8px;">Green Analysis</div>
+                    <canvas id="ts-processed" width="480" height="480" style="width:100%;height:auto;border:1px solid var(--border);border-radius:8px;"></canvas>
+                </div>
+            </div>
+            <div id="ts-green-percent" class="stat" style="margin-top:8px;"></div>
+            <div id="ts-location-info" class="stat" style="margin-top:4px;color:var(--muted);"></div>
+        </section>
+
+        <!-- Upload-based Green Cover Analysis -->
+        <section class="card section" style="margin-top:16px;">
+            <h3 style="margin:0 0 8px 0;">Upload Image for Green Cover</h3>
+            <div style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;justify-content:flex-start;">
+                <label class="file-input" style="cursor:pointer;padding:16px;border:2px dashed var(--primary);background:rgba(74,222,128,0.1);flex:1;min-width:200px;">
+                    <input type="file" id="seg-image-file" accept="image/*" style="display:none;">
+                    <span style="font-weight:600;">📁 Choose Satellite Screenshot</span>
+                    <span class="stat">JPG, PNG, WEBP supported</span>
+                </label>
+                <button class="btn btn-primary" onclick="segProcessUpload()">Analyze Upload</button>
+            </div>
+            <div class="grid grid-2" style="margin-top:12px;">
+                <img class="media" id="seg-uploaded-image" alt="Uploaded Image" />
+                <img class="media" id="seg-upload-processed" alt="Processed Image" />
+            </div>
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:8px;">
+                <div>Green Cover (upload): <strong id="seg-upload-green">-</strong></div>
+                <div>Idle Land(upload): <strong id="seg-upload-idle">-</strong></div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Map modal removed -->
+
+    <footer class="app-footer">
+        <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>&copy; 2025 EcoView Imaging</span>
+            <span class="stat">🌱 Green cover analysis</span>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+        const bodyEl = document.body;
+        mobileMenuToggle?.addEventListener('click', () => {
+            mobileNavOverlay.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+            bodyEl.classList.toggle('menu-open');
+        });
+        mobileNavOverlay?.addEventListener('click', (e) => {
+            if (e.target === mobileNavOverlay) {
+                mobileNavOverlay.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                bodyEl.classList.remove('menu-open');
+            }
+        });
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                mobileNavOverlay.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                bodyEl.classList.remove('menu-open');
+            });
+        });
+
+        // Helper: robust green classifier for satellite images (Google Earth, etc.)
+        function rgbToHsv(r, g, b) {
+            r /= 255; g /= 255; b /= 255;
+            const max = Math.max(r, g, b), min = Math.min(r, g, b);
+            const d = max - min;
+            let h = 0;
+            if (d !== 0) {
+                switch (max) {
+                    case r: h = ((g - b) / d + (g < b ? 6 : 0)); break;
+                    case g: h = ((b - r) / d + 2); break;
+                    case b: h = ((r - g) / d + 4); break;
+                }
+                h *= 60;
+            }
+            const s = max === 0 ? 0 : d / max;
+            const v = max;
+            return { h, s, v };
+        }
+
+        function isGreenPixel(r, g, b) {
+            // HSV-based green band
+            const { h, s, v } = rgbToHsv(r, g, b);
+            const hsvGreen = (h >= 60 && h <= 170) && s >= 0.2 && v >= 0.12;
+            // Excess green index as a fallback
+            const exg = 2 * g - r - b; // in 0..255 scale terms
+            const exgGreen = exg > 20 && g > r && g > b;
+            return hsvGreen || exgGreen;
+        }
+
+        // Google Maps rectangle selection → proxy image → green cover analysis
+        function tsInitMap() {
+            const map = new google.maps.Map(document.getElementById('ts-map'), {
+                center: { lat: 23.2599, lng: 77.4126 },
+                zoom: 12,
+                mapTypeId: 'hybrid',
+                streetViewControl: false
+            });
+
+            let currentRectangle = null;
+            const drawingManager = new google.maps.drawing.DrawingManager({
+                drawingMode: google.maps.drawing.OverlayType.RECTANGLE,
+                drawingControl: true,
+                drawingControlOptions: { position: google.maps.ControlPosition.TOP_CENTER, drawingModes: ['rectangle'] },
+            });
+            drawingManager.setMap(map);
+
+            google.maps.event.addListener(drawingManager, 'overlaycomplete', function (event) {
+                if (currentRectangle) currentRectangle.setMap(null);
+                currentRectangle = event.overlay;
+                const bounds = currentRectangle.getBounds();
+
+                const proxyUrl = 'https://gmap-sih-img-proxy.vipulchaturvedi.workers.dev/';
+                const imgUrl = `${proxyUrl}?center=${bounds.getCenter().lat()},${bounds.getCenter().lng()}&zoom=15&size=640x640&path=fillcolor:0x00000000|color:0x00000000|${bounds.getNorthEast().toUrlValue()}|${bounds.getNorthEast().lat()},${bounds.getSouthWest().lng()}|${bounds.getSouthWest().toUrlValue()}|${bounds.getSouthWest().lat()},${bounds.getNorthEast().lng()}`;
+
+                const croppedImage = document.getElementById('ts-cropped');
+                croppedImage.src = imgUrl;
+
+                document.getElementById('ts-location-info').innerHTML = `Center: ${bounds.getCenter().lat().toFixed(5)}, ${bounds.getCenter().lng().toFixed(5)} · Zoom: 15`;
+
+                croppedImage.onload = () => {
+                    const canvas = document.getElementById('ts-processed');
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(croppedImage, 0, 0, canvas.width, canvas.height);
+
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                    let greenPixels = 0;
+                    const data = imageData.data;
+                    for (let i = 0; i < data.length; i += 4) {
+                        const r = data[i], g = data[i + 1], b = data[i + 2];
+                        const green = isGreenPixel(r, g, b);
+                        const val = green ? 255 : 0;
+                        if (green) greenPixels++;
+                        data[i] = val; data[i + 1] = val; data[i + 2] = val; data[i + 3] = 255;
+                    }
+                    ctx.putImageData(imageData, 0, 0);
+
+                    const totalPixels = canvas.width * canvas.height;
+                    const greenPercent = (greenPixels / totalPixels) * 100;
+                    document.getElementById('ts-green-percent').innerText = `Green/Idle Land Coverage: ${greenPercent.toFixed(2)}%`;
+                };
+            });
+        }
+
+        // Upload from Google Earth (send to backend)
+        async function segProcessUpload() {
+            const input = document.getElementById('seg-image-file');
+            const file = input.files?.[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                document.getElementById('seg-uploaded-image').src = reader.result;
+            };
+            reader.readAsDataURL(file);
+
+            // Client-side black & white conversion with robust green detection
+            try {
+                const img = await createImageBitmap(file);
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+                const data = imgData.data;
+                let greenPixels = 0;
+                for (let i = 0; i < data.length; i += 4) {
+                    const r = data[i], g = data[i + 1], b = data[i + 2];
+                    const green = isGreenPixel(r, g, b);
+                    if (green) { data[i]=255; data[i+1]=255; data[i+2]=255; greenPixels++; }
+                    else { data[i]=0; data[i+1]=0; data[i+2]=0; }
+                }
+                ctx.putImageData(imgData, 0, 0);
+                document.getElementById('seg-upload-processed').src = canvas.toDataURL('image/png');
+                const total = canvas.width * canvas.height;
+                const greenPct = (greenPixels / total) * 100;
+                const upGreen = document.getElementById('seg-upload-green');
+                const upIdle = document.getElementById('seg-upload-idle');
+                // Keep values same; labels swapped in the UI
+                if (upGreen) upGreen.textContent = greenPct.toFixed(2) + '%';
+                if (upIdle) upIdle.textContent = (100 - greenPct).toFixed(2) + '%';
+            } catch (e) {
+                alert('Error: ' + e.message);
+            }
+        }
+    </script>
+
+    <!-- Google Maps JS for Map Snapshot Green Cover -->
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCpzV2uci8gLyp8si2idL0Gy1PLUe_J8bU&libraries=drawing&callback=tsInitMap"></script>
+
+</body>
+</html>

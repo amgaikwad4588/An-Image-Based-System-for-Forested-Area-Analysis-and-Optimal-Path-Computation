@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historical Data - EcoView Imaging</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/assets/css/theme.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/src/assets/js/database.js"></script>
+    <script src="/src/assets/js/analysis-logger.js"></script>
+    <style>
+        /* Hide page chrome when embedded in the dashboard iframe */
+        .embed-mode .app-header,
+        .embed-mode .app-footer { display: none; }
+        .embed-mode main.container { padding-top: 0 !important; }
+        .chart-container {
+            position: relative;
+            height: 400px;
+            margin: 24px 0;
+            padding: 20px;
+            background: rgba(254,218,106,0.05);
+            border-radius: 20px;
+            border: 1px solid rgba(254,218,106,0.2);
+            backdrop-filter: blur(20px);
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 24px 0;
+        }
+        .data-card {
+            background: linear-gradient(180deg, rgba(29,30,34,0.95) 0%, rgba(42,45,53,0.9) 100%);
+            border: 1px solid rgba(254,218,106,0.2);
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(45, 27, 105, 0.08);
+            backdrop-filter: blur(20px);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(135deg, #feda6a 0%, #fdd835 50%, #fbc02d 100%);
+            transform: scaleX(0);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .data-card:hover::before {
+            transform: scaleX(1);
+        }
+        .data-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(45,27,105,0.15);
+            border-color: rgba(254,218,106,0.4);
+        }
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--text);
+            margin: 12px 0;
+            background: linear-gradient(135deg, #feda6a 0%, #fdd835 50%, #fbc02d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .metric-label {
+            color: var(--muted);
+            font-size: 0.95em;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .export-btn {
+            background: linear-gradient(135deg, #feda6a 0%, #fdd835 50%, #fbc02d 100%);
+            border: 1px solid rgba(254,218,106,0.4);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            margin: 8px 6px;
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            box-shadow: 0 0 20px rgba(168,230,207,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        .export-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #fdd835 0%, #fbc02d 50%, #f9a825 100%);
+            transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: -1;
+        }
+        .export-btn:hover::before {
+            left: 0;
+        }
+        .export-btn:hover {
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 8px 25px rgba(254,218,106,0.4);
+        }
+        .filter-section {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            align-items: center;
+            margin: 24px 0;
+            padding: 20px;
+            background: rgba(59,130,246,0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(59,130,246,0.1);
+        }
+        .filter-input {
+            background: rgba(15,20,31,0.8);
+            border: 1px solid rgba(59,130,246,0.2);
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+        .filter-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+            background: rgba(15,20,31,0.9);
+        }
+        .filter-input::placeholder {
+            color: var(--muted);
+        }
+        .analyses-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        .analyses-table th {
+            padding: 16px 12px;
+            text-align: left;
+            color: var(--muted);
+            font-weight: 600;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 2px solid rgba(59,130,246,0.2);
+        }
+        .analyses-table td {
+            padding: 16px 12px;
+            border-bottom: 1px solid rgba(59,130,246,0.1);
+            color: var(--text);
+            font-weight: 500;
+        }
+        .analyses-table tr:hover {
+            background: rgba(59,130,246,0.05);
+        }
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .action-btn {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .view-btn {
+            background: rgba(59,130,246,0.2);
+            border: 1px solid rgba(59,130,246,0.3);
+            color: var(--primary);
+        }
+        .view-btn:hover {
+            background: rgba(59,130,246,0.3);
+            transform: translateY(-1px);
+        }
+        .delete-btn {
+            background: rgba(239,68,68,0.2);
+            border: 1px solid rgba(239,68,68,0.3);
+            color: var(--danger);
+        }
+        .delete-btn:hover {
+            background: rgba(239,68,68,0.3);
+            transform: translateY(-1px);
+        }
+        .stats-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid rgba(59,130,246,0.2);
+        }
+        .refresh-btn {
+            background: rgba(59,130,246,0.1);
+            border: 1px solid rgba(59,130,246,0.2);
+            color: var(--primary);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .refresh-btn:hover {
+            background: rgba(59,130,246,0.2);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // If this page is inside an iframe, enable embed mode to avoid double navbars
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('embed-mode');
+        }
+    </script>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <a class="brand" href="/index.html">
+                <img src="/images/treeicon.png" alt="logo">
+                <span>EcoView</span>
+            </a>
+            <nav class="nav">
+                <a href="/predict.html">Dashboard</a>
+                <a href="/tree_species.html">Species</a>
+                <a href="/optimal_path.html">Optimal Path</a>
+                <a href="/historical_data.html" class="active">History</a>
+                <a href="/settings.html">Settings</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 24px 0 40px;">
+        <h1 style="margin-bottom: 12px;background:linear-gradient(135deg, var(--primary), var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">📊 Historical Data Analytics</h1>
+        
+        <!-- Export Controls -->
+        <div class="card section" style="margin-bottom: 24px;">
+            <div class="stats-header">
+                <h3 style="color: var(--primary); font-weight: 700; font-size: 1.2em;">📈 Export & Analysis</h3>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <div id="db-status" style="padding: 4px 8px; border-radius: 6px; font-size: 12px; font-weight: 600;">
+                        🔄 Connecting...
+                    </div>
+                    <button class="refresh-btn" onclick="refreshData()">🔄 Refresh</button>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                <button class="export-btn" onclick="exportData('csv')">📄 Export CSV</button>
+                <button class="export-btn" onclick="exportData('json')">📋 Export JSON</button>
+                <button class="export-btn" onclick="generateReport()">📊 Generate Report</button>
+                <button class="export-btn" onclick="clearData()" style="background: var(--gradient-dark);">🗑️ Clear Data</button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card section">
+            <h3 style="margin-bottom: 20px;color: var(--primary); font-weight: 700; font-size: 1.2em;">🔍 Filter Data</h3>
+            <div class="filter-section">
+                <input type="date" id="startDate" class="filter-input" placeholder="Start Date">
+                <input type="date" id="endDate" class="filter-input" placeholder="End Date">
+                <select id="speciesFilter" class="filter-input">
+                    <option value="">All Species</option>
+                </select>
+                <select id="analysisFilter" class="filter-input">
+                    <option value="">All Analysis Types</option>
+                    <option value="species">Species Identification</option>
+                    <option value="path">Optimal Path</option>
+                    <option value="count">Tree Count</option>
+                </select>
+                <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                <button class="btn btn-ghost" onclick="clearFilters()">Clear Filters</button>
+            </div>
+        </div>
+
+        <!-- Key Metrics -->
+        <div class="data-grid">
+            <div class="data-card">
+                <div class="metric-label">Total Analyses</div>
+                <div class="metric-value" id="totalAnalyses">0</div>
+            </div>
+            <div class="data-card">
+                <div class="metric-label">Species Identified</div>
+                <div class="metric-value" id="speciesCount">0</div>
+            </div>
+            <div class="data-card">
+                <div class="metric-label">Average Confidence</div>
+                <div class="metric-value" id="avgConfidence">0%</div>
+            </div>
+            <div class="data-card">
+                <div class="metric-label">Most Common Species</div>
+                <div class="metric-value" id="commonSpecies">-</div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div class="card section">
+            <h3 style="margin-bottom: 15px;color: var(--primary);">📈 Analysis Trends</h3>
+            <div class="chart-container">
+                <canvas id="trendsChart"></canvas>
+            </div>
+        </div>
+
+        <div class="card section">
+            <h3 style="margin-bottom: 15px;color: var(--primary);">🌳 Species Distribution</h3>
+            <div class="chart-container">
+                <canvas id="speciesChart"></canvas>
+            </div>
+        </div>
+
+        <!-- Recent Analyses Table -->
+        <div class="card section">
+            <h3 style="margin-bottom: 20px;color: var(--primary); font-weight: 700; font-size: 1.2em;">📋 Recent Analyses</h3>
+            <div style="overflow-x: auto;">
+                <table class="analyses-table">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Type</th>
+                            <th>Species</th>
+                            <th>Confidence</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="analysesTable">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>&copy; 2025 EcoView Imaging</span>
+            <span class="stat">📊 Comprehensive environmental data analytics</span>
+        </div>
+    </footer>
+
+    <script>
+        // Database instance
+        let db = null;
+        let currentFilters = {};
+
+        // Initialize database and load data
+        async function initializeApp() {
+            try {
+                db = window.ecoviewDB;
+                if (!db) {
+                    throw new Error('Database not available');
+                }
+                
+                updateDatabaseStatus('connecting', '🔄 Connecting...');
+                
+                // Add some sample data if database is empty
+                const analyses = await db.getAnalyses();
+                if (analyses.length === 0) {
+                    await addSampleData();
+                }
+                
+                await loadHistoricalData();
+                updateDatabaseStatus('connected', '✅ Connected');
+                showNotification('Database connected successfully!', 'success');
+            } catch (error) {
+                console.error('Database initialization failed:', error);
+                updateDatabaseStatus('error', '❌ Error');
+                showNotification('Database connection failed. Using fallback storage.', 'warning');
+                // Fallback to localStorage
+                loadHistoricalDataFromLocalStorage();
+            }
+        }
+
+        // Update database status indicator
+        function updateDatabaseStatus(status, text) {
+            const statusElement = document.getElementById('db-status');
+            if (statusElement) {
+                statusElement.textContent = text;
+                statusElement.style.background = 
+                    status === 'connected' ? 'rgba(16, 185, 129, 0.2)' :
+                    status === 'error' ? 'rgba(239, 68, 68, 0.2)' :
+                    'rgba(59, 130, 246, 0.2)';
+                statusElement.style.color = 
+                    status === 'connected' ? 'var(--success)' :
+                    status === 'error' ? 'var(--danger)' :
+                    'var(--primary)';
+            }
+        }
+
+        // Add sample data for demonstration
+        async function addSampleData() {
+            const sampleData = [
+                {
+                    date: '2025-01-15',
+                    type: 'species',
+                    species: 'Oak',
+                    confidence: 0.85,
+                    image: 'data:image/jpeg;base64,...',
+                    metadata: { greenCover: 75, treeCount: 12 }
+                },
+                {
+                    date: '2025-01-14',
+                    type: 'path',
+                    species: null,
+                    confidence: null,
+                    image: 'data:image/jpeg;base64,...',
+                    metadata: { pathLength: 150, efficiency: 0.92 }
+                },
+                {
+                    date: '2025-01-13',
+                    type: 'species',
+                    species: 'Pine',
+                    confidence: 0.92,
+                    image: 'data:image/jpeg;base64,...',
+                    metadata: { greenCover: 88, treeCount: 8 }
+                },
+                {
+                    date: '2025-01-12',
+                    type: 'species',
+                    species: 'Maple',
+                    confidence: 0.78,
+                    image: 'data:image/jpeg;base64,...',
+                    metadata: { greenCover: 65, treeCount: 15 }
+                },
+                {
+                    date: '2025-01-11',
+                    type: 'count',
+                    species: null,
+                    confidence: null,
+                    image: 'data:image/jpeg;base64,...',
+                    metadata: { treeCount: 25, greenCover: 82 }
+                }
+            ];
+
+            for (const data of sampleData) {
+                try {
+                    await db.addAnalysis(data);
+                } catch (error) {
+                    console.error('Error adding sample data:', error);
+                }
+            }
+        }
+
+        // Load data from database
+        async function loadHistoricalData() {
+            try {
+                const analytics = await db.getAnalytics();
+                updateMetrics(analytics);
+                updateCharts(analytics);
+                updateTable(analytics.recentAnalyses);
+                updateSpeciesFilter();
+            } catch (error) {
+                console.error('Error loading historical data:', error);
+                showNotification('Error loading data from database', 'error');
+            }
+        }
+
+        // Fallback to localStorage
+        function loadHistoricalDataFromLocalStorage() {
+            const stored = localStorage.getItem('ecoview_historical_data');
+            if (stored) {
+                const historicalData = JSON.parse(stored);
+                updateDisplayFromArray(historicalData);
+            } else {
+                updateDisplayFromArray([]);
+            }
+        }
+
+        // Update metrics from analytics object
+        function updateMetrics(analytics) {
+            document.getElementById('totalAnalyses').textContent = analytics.totalAnalyses;
+            document.getElementById('speciesCount').textContent = analytics.speciesCount;
+            document.getElementById('avgConfidence').textContent = 
+                (analytics.averageConfidence * 100).toFixed(1) + '%';
+            document.getElementById('commonSpecies').textContent = 
+                analytics.mostCommonSpecies || '-';
+        }
+
+        // Update charts from analytics object
+        function updateCharts(analytics) {
+            updateTrendsChart(analytics.analysesByDate);
+            updateSpeciesChart(analytics.recentAnalyses);
+        }
+
+        // Update trends chart
+        function updateTrendsChart(analysesByDate) {
+            const ctx = document.getElementById('trendsChart').getContext('2d');
+            
+            const dates = Object.keys(analysesByDate).sort();
+            const counts = dates.map(d => analysesByDate[d]);
+
+            // Destroy existing chart if it exists
+            if (window.trendsChart) {
+                window.trendsChart.destroy();
+            }
+
+            window.trendsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: [{
+                        label: 'Daily Analyses',
+                        data: counts,
+                        borderColor: 'rgb(254, 218, 106)',
+                        backgroundColor: 'rgba(254, 218, 106, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#d4d4dc' }
+                        }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#a8a8b0' } },
+                        y: { ticks: { color: '#a8a8b0' } }
+                    }
+                }
+            });
+        }
+
+        // Update species chart
+        function updateSpeciesChart(analyses) {
+            const ctx = document.getElementById('speciesChart').getContext('2d');
+            
+            const speciesFreq = {};
+            analyses.filter(d => d.species).forEach(d => {
+                speciesFreq[d.species] = (speciesFreq[d.species] || 0) + 1;
+            });
+
+            const labels = Object.keys(speciesFreq);
+            const data = Object.values(speciesFreq);
+
+            // Destroy existing chart if it exists
+            if (window.speciesChart) {
+                window.speciesChart.destroy();
+            }
+
+            window.speciesChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            'rgb(254, 218, 106)',
+                            'rgb(212, 212, 220)',
+                            'rgb(57, 63, 77)',
+                            'rgb(29, 30, 34)',
+                            'rgb(76, 175, 80)',
+                            'rgb(255, 152, 0)',
+                            'rgb(244, 67, 54)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#d4d4dc' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update table with analyses array
+        function updateTable(analyses) {
+            const tbody = document.getElementById('analysesTable');
+            tbody.innerHTML = '';
+
+            if (analyses.length === 0) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--muted); font-style: italic;">
+                        No historical data available. Start analyzing images to see data here.
+                    </td>
+                `;
+                tbody.appendChild(row);
+                return;
+            }
+
+            analyses.slice(0, 10).forEach(analysis => {
+                const row = document.createElement('tr');
+                
+                const typeIcon = analysis.type === 'species' ? '🔬' : 
+                                analysis.type === 'path' ? '🗺️' : '🌳';
+                const confidenceText = analysis.confidence ? 
+                    (analysis.confidence * 100).toFixed(1) + '%' : '-';
+                
+                row.innerHTML = `
+                    <td>${formatDate(analysis.date)}</td>
+                    <td>${typeIcon} ${analysis.type.charAt(0).toUpperCase() + analysis.type.slice(1)}</td>
+                    <td>${analysis.species || '-'}</td>
+                    <td>${confidenceText}</td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="action-btn view-btn" onclick="viewAnalysis(${analysis.id})">View</button>
+                            <button class="action-btn delete-btn" onclick="deleteAnalysis(${analysis.id})">Delete</button>
+                        </div>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Update species filter dropdown
+        async function updateSpeciesFilter() {
+            try {
+                const analyses = await db.getAnalyses();
+                const species = [...new Set(analyses.filter(d => d.species).map(d => d.species))];
+                const select = document.getElementById('speciesFilter');
+                
+                select.innerHTML = '<option value="">All Species</option>';
+                species.forEach(s => {
+                    const option = document.createElement('option');
+                    option.value = s;
+                    option.textContent = s;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Error updating species filter:', error);
+            }
+        }
+
+        // Export functions
+        async function exportData(format) {
+            try {
+                const content = await db.exportData(format);
+                const mimeType = format === 'csv' ? 'text/csv' : 'application/json';
+                const filename = `ecoview_data.${format}`;
+                
+                const blob = new Blob([content], { type: mimeType });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification(`Data exported as ${format.toUpperCase()} successfully!`, 'success');
+            } catch (error) {
+                console.error('Export error:', error);
+                showNotification('Export failed', 'error');
+            }
+        }
+
+        async function generateReport() {
+            try {
+                const analytics = await db.getAnalytics();
+                const report = {
+                    generated: new Date().toISOString(),
+                    summary: analytics,
+                    databaseStats: await db.getStats()
+                };
+                
+                const content = JSON.stringify(report, null, 2);
+                const blob = new Blob([content], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'ecoview_report.json';
+                a.click();
+                URL.revokeObjectURL(url);
+                
+                showNotification('Report generated successfully!', 'success');
+            } catch (error) {
+                console.error('Report generation error:', error);
+                showNotification('Report generation failed', 'error');
+            }
+        }
+
+        async function clearData() {
+            if (confirm('Are you sure you want to clear all historical data? This action cannot be undone.')) {
+                try {
+                    await db.clearAllData();
+                    await loadHistoricalData();
+                    showNotification('All data cleared successfully!', 'success');
+                } catch (error) {
+                    console.error('Clear data error:', error);
+                    showNotification('Failed to clear data', 'error');
+                }
+            }
+        }
+
+        async function applyFilters() {
+            try {
+                currentFilters = {
+                    startDate: document.getElementById('startDate').value,
+                    endDate: document.getElementById('endDate').value,
+                    type: document.getElementById('analysisFilter').value,
+                    species: document.getElementById('speciesFilter').value
+                };
+
+                // Remove empty filters
+                Object.keys(currentFilters).forEach(key => {
+                    if (!currentFilters[key]) {
+                        delete currentFilters[key];
+                    }
+                });
+
+                const analyses = await db.getAnalyses(currentFilters);
+                const analytics = await db.getAnalytics();
+                
+                updateMetrics(analytics);
+                updateCharts(analytics);
+                updateTable(analyses);
+                
+                showNotification('Filters applied successfully!', 'success');
+            } catch (error) {
+                console.error('Filter error:', error);
+                showNotification('Failed to apply filters', 'error');
+            }
+        }
+
+        function clearFilters() {
+            document.getElementById('startDate').value = '';
+            document.getElementById('endDate').value = '';
+            document.getElementById('speciesFilter').value = '';
+            document.getElementById('analysisFilter').value = '';
+            currentFilters = {};
+            loadHistoricalData();
+            showNotification('Filters cleared!', 'success');
+        }
+
+        async function refreshData() {
+            await loadHistoricalData();
+            showNotification('Data refreshed successfully!', 'success');
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        async function viewAnalysis(id) {
+            try {
+                const analysis = await db.getAnalysis(id);
+                if (analysis) {
+                    const details = `
+Analysis Details:
+Date: ${formatDate(analysis.date)}
+Type: ${analysis.type}
+Species: ${analysis.species || 'N/A'}
+Confidence: ${analysis.confidence ? (analysis.confidence * 100).toFixed(1) + '%' : 'N/A'}
+Created: ${formatDate(analysis.createdAt)}
+Updated: ${formatDate(analysis.updatedAt)}
+                    `;
+                    alert(details);
+                }
+            } catch (error) {
+                console.error('View analysis error:', error);
+                showNotification('Failed to load analysis details', 'error');
+            }
+        }
+
+        async function deleteAnalysis(id) {
+            if (confirm('Are you sure you want to delete this analysis?')) {
+                try {
+                    await db.deleteAnalysis(id);
+                    await loadHistoricalData();
+                    showNotification('Analysis deleted successfully!', 'success');
+                } catch (error) {
+                    console.error('Delete analysis error:', error);
+                    showNotification('Failed to delete analysis', 'error');
+                }
+            }
+        }
+
+        // Fallback function for localStorage
+        function updateDisplayFromArray(historicalData) {
+            const total = historicalData.length;
+            const speciesData = historicalData.filter(d => d.type === 'species' && d.species);
+            const speciesCount = new Set(speciesData.map(d => d.species)).size;
+            const avgConf = speciesData.length > 0 ? 
+                (speciesData.reduce((sum, d) => sum + d.confidence, 0) / speciesData.length * 100).toFixed(1) : 0;
+            
+            const speciesFreq = {};
+            speciesData.forEach(d => {
+                speciesFreq[d.species] = (speciesFreq[d.species] || 0) + 1;
+            });
+            const commonSpecies = Object.keys(speciesFreq).reduce((a, b) => 
+                speciesFreq[a] > speciesFreq[b] ? a : b, '-');
+
+            document.getElementById('totalAnalyses').textContent = total;
+            document.getElementById('speciesCount').textContent = speciesCount;
+            document.getElementById('avgConfidence').textContent = avgConf + '%';
+            document.getElementById('commonSpecies').textContent = commonSpecies;
+            
+            updateTable(historicalData);
+        }
+
+        // Initialize app when DOM is loaded
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>

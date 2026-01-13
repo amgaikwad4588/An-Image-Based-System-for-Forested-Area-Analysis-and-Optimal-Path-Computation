@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta name="description" content="AI-powered environmental monitoring platform for forestry management and ecological conservation">
+  <title>EcoView Imaging - Nature-Inspired Environmental Intelligence</title>
+
+  <!-- OG -->
+  <meta property="og:site_name" content="EcoView Imaging">
+  <meta property="og:title" content="EcoView Imaging"> 
+  <meta property="og:type" content="website">
+  <meta property="og:description" content="AI-powered forestry intelligence for environmental monitoring">
+  <meta property="og:image" content="https://i.imgur.com/43l43ve.png">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="EcoView Imaging">
+  <meta name="twitter:description" content="AI-powered forestry intelligence for environmental monitoring">
+  <meta name="twitter:image:src" content="https://i.imgur.com/43l43ve.png">
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+  <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-180x180.png">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="/src/assets/css/theme.css">
+  <link rel="stylesheet" href="/src/assets/css/nature-landing.css">
+
+</head>
+<body class="nature-landing">
+
+  <!-- Tree Silhouettes -->
+  <div class="tree-silhouette left"></div>
+  <div class="tree-silhouette right"></div>
+
+  <!-- Nature Particles -->
+  <div class="nature-particles" id="natureParticles"></div>
+
+  <!-- Header -->
+  <header class="app-header nature-header">
+    <div class="container app-header-inner">
+      <a class="brand nature-brand" href="/index.html">
+        <div class="brand-icon">
+          <img src="/images/treeicon.png" alt="EcoView Imaging logo">
+          <div class="brand-nature-glow"></div>
+        </div>
+        <div class="brand-text">
+          <span class="brand-name">EcoView</span>
+          <span class="brand-tagline">Imaging</span>
+        </div>
+      </a>
+      
+      <!-- Mobile Menu Toggle -->
+      <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+      
+      <nav class="nav premium-nav">
+        <div class="nav-items">
+          <a href="/predict.html" class="nav-item nature-nav-item">
+            <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+            <span class="nav-text">Dashboard</span>
+          </a>
+          <a href="/tree_species.html" class="nav-item nature-nav-item">
+            <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+              <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+            </svg>
+            <span class="nav-text">Species</span>
+          </a>
+          <a href="/optimal_path.html" class="nav-item nature-nav-item">
+            <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span class="nav-text">Optimal Path</span>
+          </a>
+          <a href="/historical_data.html" class="nav-item nature-nav-item">
+            <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+            <span class="nav-text">History</span>
+          </a>
+          <a href="/settings.html" class="nav-item nature-nav-item">
+            <svg class="nav-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M12 1v6m0 6v6m9-9h-6m-6 0H3"/>
+            </svg>
+            <span class="nav-text">Settings</span>
+          </a>
+        </div>
+      </nav>
+    </div>
+    
+    <!-- Mobile Navigation Overlay -->
+    <div class="mobile-nav-overlay">
+      <nav class="mobile-nav">
+        <a href="/predict.html" class="mobile-nav-item">
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="/tree_species.html" class="mobile-nav-item">
+          <span class="nav-text">Species</span>
+        </a>
+        <a href="/optimal_path.html" class="mobile-nav-item">
+          <span class="nav-text">Optimal Path</span>
+        </a>
+        <a href="/historical_data.html" class="mobile-nav-item">
+          <span class="nav-text">History</span>
+        </a>
+        <a href="/settings.html" class="mobile-nav-item">
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="premium-main">
+    
+    <!-- Hero Section -->
+    <section class="nature-hero">
+      <div class="hero-forest-bg">
+        <div class="hero-forest-overlay"></div>
+        <div class="hero-forest-image"></div>
+        <div class="hero-sunlight"></div>
+      </div>
+      
+      <div class="container hero-content">
+        <div class="hero-badge-nature fade-in-nature">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+            <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          <span>AI-Powered Environmental Intelligence</span>
+        </div>
+        
+        <h1 class="hero-title-nature fade-in-nature" style="animation-delay: 0.1s;">
+          <span class="title-nature-gradient">EcoView</span>
+          <span style="color: var(--warm-tan);">Imaging</span>
+        </h1>
+        
+        <p class="hero-subtitle-nature fade-in-nature" style="animation-delay: 0.2s;">
+          Advanced AI-powered environmental monitoring platform that transforms aerial and satellite imagery into actionable insights for forestry management, biodiversity assessment, and ecological conservation.
+        </p>
+        
+        <div class="hero-cta-nature fade-in-nature" style="animation-delay: 0.3s;">
+          <a href="/predict.html" class="btn-nature btn-primary-nature">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+            <span>Launch Dashboard</span>
+          </a>
+          <a href="#features" class="btn-nature btn-secondary-nature">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/>
+              <path d="M3 9h18M9 21V9"/>
+            </svg>
+            <span>Explore Features</span>
+          </a>
+          <a href="#demo" class="btn-nature btn-tertiary-nature">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="5 3 19 12 5 21 5 3"/>
+            </svg>
+            <span>View Demo</span>
+          </a>
+        </div>
+      </div>
+      
+      <!-- Tree Ring Divider -->
+      <div class="tree-ring-divider">
+        <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="treeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" style="stop-color:#2F6F3E;stop-opacity:0.3" />
+              <stop offset="50%" style="stop-color:#4F8F56;stop-opacity:0.5" />
+              <stop offset="100%" style="stop-color:#4A3B2A;stop-opacity:0.3" />
+            </linearGradient>
+          </defs>
+          <path class="tree-ring-path" d="M0,60 Q300,20 600,60 T1200,60" fill="url(#treeGradient)"/>
+          <path class="tree-ring-path" d="M0,80 Q300,40 600,80 T1200,80" fill="url(#treeGradient)"/>
+        </svg>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="nature-features">
+      <div class="container">
+        <div class="section-header-nature fade-in-nature">
+          <h2 class="section-title-nature">Powerful Features</h2>
+          <p class="section-subtitle-nature">Cutting-edge AI technology for comprehensive environmental analysis</p>
+        </div>
+        
+        <div class="features-grid-nature">
+          <!-- Feature Card 1 -->
+          <div class="earth-card fade-in-nature" data-feature="1">
+            <div class="leaf-shadow"></div>
+            <div class="feature-icon-nature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2C8 2 5 5 5 9c0 5 7 13 7 13s7-8 7-13c0-4-3-7-7-7z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title-nature">Smart Tree Detection</h3>
+            <p class="feature-description-nature">Advanced AI algorithms for precise tree counting and canopy analysis with 95%+ accuracy.</p>
+          </div>
+          
+          <!-- Feature Card 2 -->
+          <div class="earth-card fade-in-nature" data-feature="2">
+            <div class="leaf-shadow"></div>
+            <div class="feature-icon-nature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title-nature">Species Identification</h3>
+            <p class="feature-description-nature">Machine learning-powered species recognition supporting 50+ tree types with detailed characteristics.</p>
+          </div>
+          
+          <!-- Feature Card 3 -->
+          <div class="earth-card fade-in-nature" data-feature="3">
+            <div class="leaf-shadow"></div>
+            <div class="feature-icon-nature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <path d="M12 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4z"/>
+                <path d="M12 14a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+              </svg>
+            </div>
+            <h3 class="feature-title-nature">Optimal Path Planning</h3>
+            <p class="feature-description-nature">Intelligent routing algorithms for efficient navigation through forested terrain.</p>
+          </div>
+          
+          <!-- Feature Card 4 -->
+          <div class="earth-card fade-in-nature" data-feature="4">
+            <div class="leaf-shadow"></div>
+            <div class="feature-icon-nature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2"/>
+                <path d="M3 9h18M9 21V9"/>
+                <path d="M7 13h10M7 17h6"/>
+              </svg>
+            </div>
+            <h3 class="feature-title-nature">Analytics Dashboard</h3>
+            <p class="feature-description-nature">Comprehensive data visualization with historical trends and environmental metrics.</p>
+          </div>
+          
+          <!-- Feature Card 5 -->
+          <div class="earth-card fade-in-nature" data-feature="5">
+            <div class="leaf-shadow"></div>
+            <div class="feature-icon-nature">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 2v20M2 12h20"/>
+                <circle cx="12" cy="12" r="4"/>
+                <path d="M8 8l8 8M8 16l8-8"/>
+              </svg>
+            </div>
+            <h3 class="feature-title-nature">Green Cover Analysis</h3>
+            <p class="feature-description-nature">Detailed vegetation density mapping and carbon sequestration estimates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual Pipeline Section -->
+    <section id="demo" class="nature-visual">
+      <div class="container">
+        <div class="section-header-nature fade-in-nature">
+          <h2 class="section-title-nature">AI Processing Pipeline</h2>
+          <p class="section-subtitle-nature">From raw satellite imagery to actionable insights</p>
+        </div>
+        
+        <div class="image-carousel-nature">
+          <div class="carousel-container-nature">
+            <div class="carousel-track-nature" id="carouselTrackNature">
+              <div class="carousel-slide-nature active">
+                <div class="slide-content-nature">
+                  <div class="slide-label-nature">Original Satellite Image</div>
+                  <div class="image-wrapper-nature">
+                    <img src="/images/panaromic.png" alt="Original satellite imagery" class="carousel-image-nature">
+                    <div class="image-overlay-nature"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="carousel-slide-nature">
+                <div class="slide-content-nature">
+                  <div class="slide-label-nature">Grayscale Processing</div>
+                  <div class="image-wrapper-nature">
+                    <img src="/images/panaromic.png" alt="Grayscale processing" class="carousel-image-nature grayscale-filter-nature">
+                    <div class="image-overlay-nature"></div>
+                  </div>
+                </div>
+              </div>
+              
+              <div class="carousel-slide-nature">
+                <div class="slide-content-nature">
+                  <div class="slide-label-nature">AI Segmentation Output</div>
+                  <div class="image-wrapper-nature">
+                    <img src="/images/panaromic.png" alt="AI segmentation" class="carousel-image-nature segmentation-filter-nature">
+                    <div class="image-overlay-nature"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          
+          <div class="carousel-controls-nature">
+            <button class="carousel-btn-nature prev-btn" id="prevBtnNature">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M15 18l-6-6 6-6"/>
+              </svg>
+            </button>
+            <div class="carousel-dots-nature">
+              <span class="dot-nature active" data-slide="0"></span>
+              <span class="dot-nature" data-slide="1"></span>
+              <span class="dot-nature" data-slide="2"></span>
+            </div>
+            <button class="carousel-btn-nature next-btn" id="nextBtnNature">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Nature Footer -->
+  <footer class="premium-footer nature-footer">
+    <div class="footer-ground-gradient"></div>
+    <div class="container">
+      <div class="footer-content-nature">
+        <div class="footer-column-nature">
+          <div class="footer-brand-nature">
+            <div class="footer-logo-nature">
+              <img src="/images/treeicon.png" alt="EcoView">
+            </div>
+            <h3>EcoView Imaging</h3>
+            <p>Transforming environmental monitoring through AI innovation</p>
+          </div>
+        </div>
+        
+        <div class="footer-column-nature">
+          <h4>Features</h4>
+          <ul>
+            <li><a href="/predict.html">Tree Detection</a></li>
+            <li><a href="/tree_species.html">Species ID</a></li>
+            <li><a href="/optimal_path.html">Path Planning</a></li>
+            <li><a href="/historical_data.html">Analytics</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column-nature">
+          <h4>Platform</h4>
+          <ul>
+            <li><a href="/predict.html">Dashboard</a></li>
+            <li><a href="/settings.html">Settings</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#demo">Demo</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column-nature">
+          <h4>About</h4>
+          <ul>
+            <li>AI-Powered Solutions</li>
+            <li>Environmental Intelligence</li>
+            <li>Forestry Management</li>
+            <li>Conservation Technology</li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="footer-bottom-nature">
+        <div class="footer-copyright-nature">
+          <span>&copy; 2025 EcoView Imaging. All rights reserved.</span>
+        </div>
+        <div class="footer-tagline-nature">
+          <span>Protecting our planet through technology</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- JavaScript -->
+  <script src="/src/assets/js/nature-landing.js"></script>
+  <script>
+    // Mobile menu functionality
+    const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+    const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+    const body = document.body;
+
+    mobileMenuToggle?.addEventListener('click', () => {
+      mobileNavOverlay.classList.toggle('active');
+      mobileMenuToggle.classList.toggle('active');
+      body.classList.toggle('menu-open');
+    });
+
+    mobileNavOverlay?.addEventListener('click', (e) => {
+      if (e.target === mobileNavOverlay) {
+        mobileNavOverlay.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+        body.classList.remove('menu-open');
+      }
+    });
+
+    document.querySelectorAll('.mobile-nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        mobileNavOverlay.classList.remove('active');
+        mobileMenuToggle.classList.remove('active');
+        body.classList.remove('menu-open');
+      });
+    });
+
+    // Smooth scroll for anchor links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+          const headerOffset = 80;
+          const elementPosition = target.getBoundingClientRect().top;
+          const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+          
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      });
+    });
+
+    // Navbar scroll effect
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('.app-header');
+      if (window.scrollY > 100) {
+        header.classList.add('scrolled');
+      } else {
+        header.classList.remove('scrolled');
+      }
+    });
+  </script>
+
+</body>
+</html>

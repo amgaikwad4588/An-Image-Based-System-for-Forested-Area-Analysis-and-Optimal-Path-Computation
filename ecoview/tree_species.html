@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Species Identification - EcoView Imaging</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/src/assets/css/theme.css">
+    <style>
+        /* Hide page chrome when embedded in the dashboard iframe */
+        .embed-mode .app-header,
+        .embed-mode .app-footer { display: none; }
+        .embed-mode main.container { padding-top: 0 !important; }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            color: inherit;
+            background: transparent;
+        }
+
+        h1 {
+            font-size: 26px;
+            margin: 20px 0;
+            color: #007BFF;
+        }
+
+        .upload-section {
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            margin: 10px 0;
+        }
+
+        input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .file-input-button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .file-input-button:hover {
+            background-color: #45a049;
+        }
+
+        .process-button {
+            background-color: #2196F3;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px;
+        }
+
+        .process-button:hover {
+            background-color: #1976D2;
+        }
+
+        .process-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        #output {
+            margin: 30px auto;
+            padding: 15px;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
+            width: 90%;
+            max-width: 1100px;
+        }
+
+        .image-container {
+            display: flex;
+            justify-content: space-around;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .image-box {
+            flex: 1;
+            min-width: 400px;
+            max-width: 500px;
+        }
+
+        .image-box img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border: 1px solid #bbb;
+            border-radius: 6px;
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            font-size: 18px;
+            color: #555;
+        }
+
+        .species-results {
+            margin-top: 20px;
+            text-align: left;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+        }
+
+        .species-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .species-item:last-child {
+            border-bottom: none;
+        }
+
+        .species-name {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .confidence-bar {
+            width: 200px;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0 10px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff4444, #ffaa00, #44ff44);
+            transition: width 0.3s ease;
+        }
+
+        .confidence-text {
+            font-size: 14px;
+            color: #666;
+            min-width: 50px;
+        }
+
+        .characteristics {
+            font-size: 12px;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .loading {
+            display: none;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #d32f2f;
+            background-color: #ffebee;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // If this page is inside an iframe, enable embed mode to avoid double navbars
+        if (window.self !== window.top) {
+            document.documentElement.classList.add('embed-mode');
+        }
+    </script>
+    <header class="app-header">
+        <div class="container app-header-inner">
+            <a class="brand" href="/index.html">
+                <div class="brand-icon">
+                    <img src="/images/treeicon.png" alt="EcoView Imaging logo">
+                </div>
+                <div class="brand-text">
+                    <span class="brand-name">EcoView</span>
+                    <span class="brand-tagline">Imaging</span>
+                </div>
+            </a>
+            <button class="mobile-menu-toggle" aria-label="Toggle navigation menu">
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+                <span class="hamburger-line"></span>
+            </button>
+            <nav class="nav">
+                <div class="nav-items">
+                    <a href="/predict.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        <span class="nav-text">Dashboard</span>
+                    </a>
+                    <a href="/tree_species.html" class="nav-item active">
+                        <span class="nav-icon">🌳</span>
+                        <span class="nav-text">Species</span>
+                    </a>
+                    <a href="/optimal_path.html" class="nav-item">
+                        <span class="nav-icon">🗺️</span>
+                        <span class="nav-text">Optimal Path</span>
+                    </a>
+                    <a href="/historical_data.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        <span class="nav-text">History</span>
+                    </a>
+                    <a href="/settings.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        <span class="nav-text">Settings</span>
+                    </a>
+                    <a href="/object_segmentation.html" class="nav-item">
+                        <span class="nav-icon">🌱</span>
+                        <span class="nav-text">Green Cover</span>
+                    </a>
+                </div>
+            </nav>
+        </div>
+        <div class="mobile-nav-overlay">
+            <nav class="mobile-nav">
+                <a href="/predict.html" class="mobile-nav-item"><span class="nav-icon">📊</span><span class="nav-text">Dashboard</span></a>
+                <a href="/tree_species.html" class="mobile-nav-item"><span class="nav-icon">🌳</span><span class="nav-text">Species</span></a>
+                <a href="/optimal_path.html" class="mobile-nav-item"><span class="nav-icon">🗺️</span><span class="nav-text">Optimal Path</span></a>
+                <a href="/historical_data.html" class="mobile-nav-item"><span class="nav-icon">📈</span><span class="nav-text">History</span></a>
+                <a href="/settings.html" class="mobile-nav-item"><span class="nav-icon">⚙️</span><span class="nav-text">Settings</span></a>
+                <a href="/object_segmentation.html" class="mobile-nav-item"><span class="nav-icon">🌱</span><span class="nav-text">Green Cover</span></a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container" style="padding: 24px 0 40px;">
+    <h1 style="margin-bottom: 12px;background:linear-gradient(135deg, var(--primary), var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;">🔬 Species Identification</h1>
+    
+    <div class="upload-section card section">
+        <h3>🌳 Upload an image for AI-powered species identification</h3>
+        <div class="file-input-wrapper" style="margin-top:10px;">
+            <label class="file-input" style="cursor:pointer;padding:16px;border:2px dashed var(--primary);background:rgba(74,222,128,0.1);">
+                <input type="file" id="imageFile" accept="image/*" style="display:none;">
+                <span style="font-weight:600;">📁 Choose Tree Image</span>
+                <span class="stat">JPG, PNG, WEBP supported</span>
+            </label>
+        </div>
+        <button class="btn btn-primary" id="processButton" onclick="processImage()" disabled>🔍 Analyze Species</button>
+    </div>
+
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Analyzing tree species...</p>
+    </div>
+
+    <div id="output" class="card section" style="display: none; margin-top: 20px;">
+        <h2 style="color:var(--primary);">📊 Analysis Results</h2>
+        <div class="grid grid-2" style="margin-top: 10px;">
+            <div>
+                <h3>Original Image</h3>
+                <img id="originalImage" class="media" src="" alt="Original Image">
+            </div>
+            <div>
+                <h3>Species Analysis</h3>
+                <img id="annotatedImage" class="media" src="" alt="Annotated Image">
+            </div>
+        </div>
+        <div class="species-results" id="speciesResults" style="margin-top: 12px;"></div>
+    </div>
+
+    <div id="errorMessage" class="error" style="display: none;"></div>
+    </main>
+
+    <footer class="app-footer">
+        <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+            <span>&copy; 2025 EcoView Imaging</span>
+            <span class="stat">🌱 Advanced species recognition technology</span>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu behavior
+        const mobileMenuToggle = document.querySelector('.mobile-menu-toggle');
+        const mobileNavOverlay = document.querySelector('.mobile-nav-overlay');
+        const bodyEl = document.body;
+        mobileMenuToggle?.addEventListener('click', () => {
+            mobileNavOverlay.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+            bodyEl.classList.toggle('menu-open');
+        });
+        mobileNavOverlay?.addEventListener('click', (e) => {
+            if (e.target === mobileNavOverlay) {
+                mobileNavOverlay.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                bodyEl.classList.remove('menu-open');
+            }
+        });
+        document.querySelectorAll('.mobile-nav-item').forEach(item => {
+            item.addEventListener('click', () => {
+                mobileNavOverlay.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+                bodyEl.classList.remove('menu-open');
+            });
+        });
+        let selectedFile = null;
+
+        // File input handling
+        document.getElementById('imageFile').addEventListener('change', function(event) {
+            selectedFile = event.target.files[0];
+            const processButton = document.getElementById('processButton');
+            
+            if (selectedFile) {
+                processButton.disabled = false;
+                // Show preview of selected image
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('originalImage').src = e.target.result;
+                };
+                reader.readAsDataURL(selectedFile);
+            } else {
+                processButton.disabled = true;
+            }
+        });
+
+        async function processImage() {
+            if (!selectedFile) {
+                showError('Please select an image first.');
+                return;
+            }
+
+            // Show loading state
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('output').style.display = 'none';
+            document.getElementById('errorMessage').style.display = 'none';
+
+            try {
+                const formData = new FormData();
+                formData.append('image', selectedFile);
+
+                const response = await fetch('http://127.0.0.1:8000/identify_species', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Species identification failed');
+                }
+
+                // Display results
+                displayResults(data);
+
+            } catch (error) {
+                showError('Error: ' + error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        }
+
+        function displayResults(data) {
+            // Show the output section
+            document.getElementById('output').style.display = 'block';
+
+            // Display annotated image
+            document.getElementById('annotatedImage').src = 'data:image/png;base64,' + data.annotated_image;
+
+            // Display species results
+            const speciesResults = document.getElementById('speciesResults');
+            speciesResults.innerHTML = '';
+
+            if (data.metadata && data.metadata.predictions) {
+                data.metadata.predictions.forEach((prediction, index) => {
+                    const speciesItem = document.createElement('div');
+                    speciesItem.className = 'species-item';
+                    
+                    const confidencePercent = (prediction.confidence * 100).toFixed(1);
+                    const confidenceWidth = (prediction.confidence * 100) + '%';
+                    
+                    speciesItem.innerHTML = `
+                        <div>
+                            <div class="species-name">${prediction.species}</div>
+                            <div class="characteristics">${prediction.characteristics.join(', ')}</div>
+                        </div>
+                        <div class="confidence-bar">
+                            <div class="confidence-fill" style="width: ${confidenceWidth}"></div>
+                        </div>
+                        <div class="confidence-text">${confidencePercent}%</div>
+                    `;
+                    
+                    speciesResults.appendChild(speciesItem);
+                });
+            }
+        }
+
+        function showError(message) {
+            const errorDiv = document.getElementById('errorMessage');
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
+
