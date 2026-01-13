@@ -1,4 +1,5 @@
-# 🌳 EcoView Imaging - AI-Powered Environmental Monitoring
+# An-Image-Based-System-for-Forested-Area-Analysis-and-Optimal-Path-Computation
+
 
 [![Python](https://img.shields.io/badge/Python-3.8+-blue.svg)](https://python.org)
 [![Flask](https://img.shields.io/badge/Flask-3.0+-green.svg)](https://flask.palletsprojects.com)
